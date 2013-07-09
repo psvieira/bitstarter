@@ -6,8 +6,8 @@ var inBuffer = new Buffer(255);
 var app = express.createServer(express.logger());
 
 app.get('/', function(request, response) {
-	inBuffer = fs.readFileSync(inFile, {'encoding':'utf8'});
-	response.send(inBuffer.toString('utf8'));
+	inBuffer = fs.readFileSync(inFile);
+	response.send(inBuffer.toString());
 });
 
 var port = process.env.PORT || 5000;
