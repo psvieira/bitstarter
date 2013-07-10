@@ -21,34 +21,15 @@ var assertFileExists = function(infile) {
 	return instr;
 };
 
-var cheerioHtmlFile = function(htmlfile) {
-	return cheerio.load(fs.readFileSync(htmlfile));
-};
-
-var loadChecks = function(checksfile) {
-	return JSON.parse(fs.readFileSync(checksfile));
-};
-
 var checkHtmlFile = function(htmlfile, checksfile) {
-	$ = cheerioHtmlFile(htmlfile);
-	var checks = loadChecks(checksfile).sort();
+	html = cheerio.load(fs.readFileSync(htmlfile));
+	var checks = JSON.parse(fs.readFileSync(checksfile)).sort();
 	var out = {};
 	for (var ii in checks) {
-		var present = $(checks[ii]).length > 0;
+		var present = html(checks[ii]).length > 0;
 		out[checks[ii]] = present;
 	}
 	return out;
-};
-
-var createWorkFile = function (url) {
-	var extractHtml = function (result, response) {
-		if (result instanceof Error) {
-			console.log('Error: ' + util.format(response.message));
-		} else {
-			fs.writeFileSync(WORKFILE, result);
-		}
-	};
-	rest.get(url).on('complete', extractHtml);
 };
 
 var clone = function(fn) {
@@ -66,14 +47,21 @@ if (require.main == module) {
 		.option('-u, --url <html_url', 'URL of HTML page')
 		.parse(process.argv);
 	if (program.url) {
-		createWorkFile(program.url);
-		var htmlFile = WORKFILE;
+		rest.get(program.url).on('complete', function (result, response) {
+			if (result instanceof Error) {
+				console.log('Error: ' + util.format(response.message));
+			} else {
+				fs.writeFileSync(WORKFILE, result);
+				var checkJson = checkHtmlFile(WORKFILE, program.checks);
+				var outJson = JSON.stringify(checkJson, null, 4);
+				console.log(outJson);
+			}
+		});
 	} else {
-		var htmlFile = program.file;
+		var checkJson = checkHtmlFile(program.file, program.checks);
+		var outJson = JSON.stringify(checkJson, null, 4);
+		console.log(outJson);
 	}
-	var checkJson = checkHtmlFile(htmlFile, program.checks);
-	var outJson = JSON.stringify(checkJson, null, 4);
-	console.log(outJson);
 } else {
 	exports.checkHtmlFile = checkHtmlFile;
 }
