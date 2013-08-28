@@ -1,3 +1,21 @@
+# Heroku environmental variables, including API keys.
+# https://devcenter.heroku.com/articles/config-vars
+.env
+
+# npm packages
+node_modules
+npm-debug.log
+
+# Mac
+.DS_Store
+
+# Emacs
+*~
+
+# Misc
+asset1.docx
+work.html
+
 lib-cov
 *.seed
 *.log
@@ -13,7 +31,3 @@ lib-cov
 pids
 logs
 results
-
-npm-debug.log
-node_modules
-.DS_Store
