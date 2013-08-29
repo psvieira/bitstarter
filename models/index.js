@@ -24,7 +24,7 @@ if (!global.hasOwnProperty('db')) {
             host:     host,
             logging:  true //false
         };
-        console.log ("URL:" + dbname + "," + user + "," + password + "," + config);
+        console.log ("URL:" + dbname + "," + user + "," + password + "@" + host + ":" + port);
         sq = new Sequelize(dbname, user, password, config);
     } else {
         /* Local database
@@ -42,7 +42,7 @@ if (!global.hasOwnProperty('db')) {
             port:     port,
             host:     host,
         };
-        console.log ("URL:" + dbname + "," + user + "," + password + "," + config);
+        console.log ("LOCAL:" + dbname + "," + user + "," + password + "@" + host + ":" + port);
         var sq = new Sequelize(dbname, user, password, config);
     }
     global.db = {
