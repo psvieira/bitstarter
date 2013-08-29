@@ -3,6 +3,7 @@ if (!global.hasOwnProperty('db')) {
     var sq = null;
     var fs = require('fs');
     var PGPASS_FILE = '../.pgpass';
+    console.log ("DB URL=" + DATABASE_URL);
     if (process.env.DATABASE_URL) {
         /* Remote database
            Do `heroku config` for details. We will be parsing a connection
@@ -24,6 +25,7 @@ if (!global.hasOwnProperty('db')) {
             host:     host,
             logging:  true //false
         };
+        console.log ("URL:" + dbname + "," + user + "," + password + "," + config);
         sq = new Sequelize(dbname, user, password, config);
     } else {
         /* Local database
@@ -41,6 +43,7 @@ if (!global.hasOwnProperty('db')) {
             port:     port,
             host:     host,
         };
+        console.log ("URL:" + dbname + "," + user + "," + password + "," + config);
         var sq = new Sequelize(dbname, user, password, config);
     }
     global.db = {
