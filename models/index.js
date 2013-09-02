@@ -3,6 +3,7 @@ if (!global.hasOwnProperty('db')) {
     var sq = null;
  /*   var fs = require('fs');
     var PGPASS_FILE = '../.pgpass'; */
+    console.log ("Database=" + process.env.DATABASE_URL);
     if (process.env.DATABASE_URL) {
         /* Database
            Do `heroku config` for details. We will be parsing a connection
@@ -23,7 +24,6 @@ if (!global.hasOwnProperty('db')) {
             host:     host,
             logging:  true //false
         };
-        console.log ("Database=" + user + ":" + password + "@" + host + ":" + port + "/" + dbname);
         sq = new Sequelize(dbname, user, password, config);
         global.db = {
         Sequelize: Sequelize,
