@@ -1,14 +1,13 @@
 if (!global.hasOwnProperty('db')) {
     var Sequelize = require('sequelize');
     var sq = null;
-    var fs = require('fs');
-    var PGPASS_FILE = '../.pgpass';
+ /*   var fs = require('fs');
+    var PGPASS_FILE = '../.pgpass'; */
     if (process.env.DATABASE_URL) {
-        /* Remote database
+        /* Database
            Do `heroku config` for details. We will be parsing a connection
            string of the form:
-           postgres://bucsqywelrjenr:ffGhjpe9dR13uL7anYjuk3qzXo@\
-           ec2-54-221-204-17.compute-1.amazonaws.com:5432/d4cftmgjmremg1
+           postgres://user:password@host:port/dbname
         */
         var pgregex = /postgres:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.+)/;
         var match = process.env.DATABASE_URL.match(pgregex);
@@ -24,31 +23,15 @@ if (!global.hasOwnProperty('db')) {
             host:     host,
             logging:  true //false
         };
-        console.log ("URL:" + dbname + "," + user + "," + password + "@" + host + ":" + port);
+        console.log ("Database=" + user + ":" + password + "@" + host + ":" + port + "/" + dbname);
         sq = new Sequelize(dbname, user, password, config);
-    } else {
-        /* Local database
-           We parse the .pgpass file for the connection string parameters.
-        */
-        var pgtokens = fs.readFileSync(PGPASS_FILE).toString().split(':');
-        var host = pgtokens[0];
-        var port = pgtokens[1];
-        var dbname = pgtokens[2];
-        var user = pgtokens[3];
-        var password = pgtokens[4];
-        var config =  {
-            dialect:  'postgres',
-            protocol: 'postgres',
-            port:     port,
-            host:     host,
-        };
-        console.log ("LOCAL:" + dbname + "," + user + "," + password + "@" + host + ":" + port);
-        var sq = new Sequelize(dbname, user, password, config);
-    }
-    global.db = {
+        global.db = {
         Sequelize: Sequelize,
         sequelize: sq,
         Order: sq.import(__dirname + '/order')
+        }
+    } else {
+        return new Error ("DATABASE_URL not set");
     };
 }
 module.exports = global.db;
