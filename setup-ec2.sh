@@ -1,9 +1,8 @@
 #!/bin/bash
 # Simple setup.sh for configuring Ubuntu 12.04 LTS EC2 instance
-# for headless setup. 
+# for headless setup.
 
-# sudo apt-get install -y git
-# sudo apt-get install -y curl
+# Install git before running this script: sudo apt-get install -y git
 
 # Install nvm: node-version manager - https://github.com/creationix/nvm
 curl https://raw.github.com/creationix/nvm/master/install.sh | sh
@@ -25,7 +24,9 @@ npm install
 # Install Heroku toolbelt - https://toolbelt.heroku.com/debian
 wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
 
-# export PATH=/usr/local/heroku/bin:$PATH # Heroku: https://toolbelt.heroku.com/standalone
+export PATH=/usr/local/heroku/bin:$PATH 
+
+# Heroku: https://toolbelt.heroku.com/standalone
 
 # Set up postgres db for local debugging. Unlike MySQL, PostgreSQL makes it harder to set 
 # blank passwords or set passwords from the command line. See here for background:
@@ -40,19 +41,24 @@ wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
 # Install postgres
 sudo apt-get install -y postgresql postgresql-contrib
 
-# Set environment variables for ec2dev from .env-local file (not under git control)
-source .env-local
+# Set environment variables from .env-local file (not under git control)
+# COINBASE_API_KEY, DATABASE_URL and PORT
+cp .env-local .env
+source .env
 
 # Now set up the users
 #
 # If you don't type in the password right, easiest is to change the value in
 # pgpass and try again. You can also delete the local postgres db
 # if you know how to do that. 
-echo -e "\n\nINPUT THE FOLLOWING PASSWORD TWICE BELOW: "${DB_PASS}
+echo -e "\n\nINPUT THE FOLLOWING PASSWORD TWICE BELOW: "$DB_PASS
 sudo -u postgres createuser -U postgres -E -P -s $DB_USER
 sudo -u postgres createdb -U postgres -O $DB_USER $DB_NAME
 
-# Test that it works.
-# Note that the symlinking of pgpass into $HOME should pass the password to psql and make these commands work. 
-echo "CREATE TABLE phonebook(phone VARCHAR(32), firstname VARCHAR(32), lastname VARCHAR(32), address VARCHAR(64));" | psql -d $PG_DB -U $PG_USER
-echo "INSERT INTO phonebook(phone, firstname, lastname, address) VALUES('+1 123 456 7890', 'John', 'Doe', 'North America');" | psql -d $PG_DB -U $PG_USER
+STRING=$( cat <<EOF
+Now to run the server locally, do:\n
+     $ foreman start\n
+Then check your EC2 URL at port 8080\n\n
+EOF
+)
+echo -e $STRING
