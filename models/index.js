@@ -29,9 +29,9 @@ if (!global.hasOwnProperty('db')) {
         Sequelize: Sequelize,
         sequelize: sq,
         Order: sq.import(__dirname + '/order')
-        }
+        };
     } else {
         return new Error ("DATABASE_URL not set");
-    };
+    }
 }
 module.exports = global.db;
