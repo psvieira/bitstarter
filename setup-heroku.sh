@@ -27,11 +27,11 @@ STRING=$( cat <<EOF
 Now do the following:\n\n
 
 1) To deploy to heroku-staging\n
-     $ git push heroku-staging\n
+     $ git push heroku-staging staging:master\n
      $ heroku config:push --app vegapi-s\n
    Then check the corresponding Heroku URL\n\n
 2) To deploy to heroku-production\n
-	 $ git push heroku-production\n
+	 $ git push heroku-production master:master\n
 	 $ heroku config:push --app vegapi\n
 EOF
 )
